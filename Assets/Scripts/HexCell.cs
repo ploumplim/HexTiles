@@ -7,4 +7,6 @@ public class HexCell : MonoBehaviour {
 
 	// Color of the hex cell
 	public Color color;
+	
+	public bool isAlive;
 }

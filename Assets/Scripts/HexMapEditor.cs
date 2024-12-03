@@ -3,35 +3,40 @@ using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour {
 
-	public Color[] colors;
+    public Color[] colors;
+    public HexGrid hexGrid;
+    public Color activeColor;
 
-	public HexGrid hexGrid;
+    private bool inputHandled = false;
 
-	private Color activeColor;
+    void Awake () {
+        SelectColor(0);
+    }
 
-	void Awake () {
-		SelectColor(0);
-	}
+    void Update () {
+        if (
+            Input.GetMouseButton(0) &&
+            !EventSystem.current.IsPointerOverGameObject() &&
+            !inputHandled
+        ) {
+            HandleInput();
+            inputHandled = true;
+        }
 
-	void Update () {
-		if (
-			Input.GetMouseButton(0) &&
-			!EventSystem.current.IsPointerOverGameObject()
-		) {
-			Debug.Log("Clic");
-			HandleInput();
-		}
-	}
+        if (Input.GetMouseButtonUp(0)) {
+            inputHandled = false;
+        }
+    }
 
-	void HandleInput () {
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
-			hexGrid.ColorCell(hit.point, activeColor);
-		}
-	}
+    void HandleInput () {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit)) {
+            hexGrid.ColorCell(hit.point, activeColor);
+        }
+    }
 
-	public void SelectColor (int index) {
-		activeColor = colors[index];
-	}
+    public void SelectColor (int index) {
+        activeColor = colors[index];
+    }
 }

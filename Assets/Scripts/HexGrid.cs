@@ -41,6 +41,20 @@ public class HexGrid : MonoBehaviour {
 	void Start () {
 		// Triangulate the mesh with the created cells
 		hexMesh.GenerateHexMesh(cells);
+
+		// Get the central cell of the grid
+		HexCell centralCell = GetCentralCell(cells, width, height);
+		Debug.Log($"Central Cell Coordinates: {centralCell.coordinates}, Position: {centralCell.transform.localPosition}");
+		centralCell.isAlive = true;
+
+		// Color the central cell and its neighbors
+		if (centralCell.isAlive) {
+			centralCell.color = Color.yellow;
+			GetNeighboors(centralCell);
+		}
+
+		Debug.Log("Central Cell: " + centralCell.coordinates.ToString());
+		hexMesh.GenerateHexMesh(cells); // Re-triangulate the mesh to update colors
 	}
 
 	public void ColorCell (Vector3 position, Color color) {
@@ -53,8 +67,91 @@ public class HexGrid : MonoBehaviour {
 		// Get the cell and change its color
 		HexCell cell = cells[index];
 		cell.color = color;
+		GetNeighboors(cell);
 		// Re-triangulate the mesh to update colors
 		hexMesh.GenerateHexMesh(cells);
+	}
+
+	public void GetNeighboors(HexCell cell)
+	{
+		HexCoordinates coordinates = cell.coordinates;
+		HexCoordinates[] directions = {
+			new HexCoordinates(1, 0),
+			new HexCoordinates(1, -1),
+			new HexCoordinates(0, -1),
+			new HexCoordinates(-1, 0),
+			new HexCoordinates(-1, 1),
+			new HexCoordinates(0, 1)
+		};
+
+		for (int i = 0; i < 6; i++)
+		{
+			HexCoordinates newCoordinates = HexCoordinates.Add(coordinates, directions[i]);
+
+			if (IsValidCoordinates(newCoordinates))
+			{
+				int index = newCoordinates.X + newCoordinates.Z * width + newCoordinates.Z / 2;
+				if (index >= 0 && index < cells.Length)
+				{
+					HexCell newCell = cells[index];
+					newCell.color = Color.grey;
+					Debug.Log("Neighbor colored grey: " + newCoordinates.ToString());
+				}
+				else
+				{
+					Debug.Log("Index out of bounds: " + index);
+				}
+			}
+			else
+			{
+				Debug.Log("Invalid coordinates: " + newCoordinates.ToString());
+			}
+		}
+		Debug.Log("--------------------");
+	}
+
+	private bool IsValidCoordinates(HexCoordinates coordinates)
+	{
+		int x = coordinates.X;
+		int z = coordinates.Z;
+		return x >= 0 && x < width && z >= 0 && z < height;
+	}
+	
+	public HexCell GetCentralCell(HexCell[] cells, int width, int height)
+	{
+		// Calculate the center coordinates
+		int centerX = (width - 1) / 2;
+		int centerZ = (height - 1) / 2;
+
+		Debug.Log($"Calculated center coordinates: ({centerX}, {centerZ})");
+
+		// Find the cell with the closest coordinates to the center
+		foreach (HexCell cell in cells)
+		{
+			if (cell.coordinates.X == centerX && cell.coordinates.Z == centerZ)
+			{
+				Debug.Log($"Found central cell at coordinates: {cell.coordinates}");
+				return cell;
+			}
+		}
+
+		// If no exact match is found, return the closest cell
+		HexCell closestCell = null;
+		float closestDistance = float.MaxValue;
+		Vector3 centerPosition = new Vector3(centerX, 0, centerZ);
+
+		foreach (HexCell cell in cells)
+		{
+			float distance = Vector3.Distance(cell.transform.localPosition, centerPosition);
+			if (distance < closestDistance)
+			{
+				closestDistance = distance;
+				closestCell = cell;
+			}
+		}
+
+		Debug.Log($"Closest cell found at coordinates: {closestCell.coordinates} with position: {closestCell.transform.localPosition}");
+		return closestCell;
 	}
 
 	void CreateCell (int x, int z, int i) {
