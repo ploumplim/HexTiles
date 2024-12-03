@@ -28,7 +28,7 @@ public class HexMapEditor : MonoBehaviour {
 		if (Physics.Raycast(inputRay, out hit)) {
 			HexCell cell = hexGrid.GetCell(hit.point);
 			if (cell != null) {
-				Debug.Log($"Cell at position: {cell.coordinates}");
+				Debug.Log($"Cell at positionhave lifetime of: {cell.coordinates}");
 			}
 		}
 	}

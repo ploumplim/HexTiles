@@ -39,9 +39,16 @@ public class HexGrid : MonoBehaviour {
     }
 
     void Start () {
-        Debug.Log(GetCentralCell(cells, width, height).coordinates.ToString());
-        centralCellGO.transform.position = GetCentralCell(cells, width, height).transform.position;
-        Camera.transform.position = new Vector3(centralCellGO.transform.position.x, centralCellGO.transform.position.y + 60, centralCellGO.transform.position.z - 25);
+        HexCell centralCell = GetCentralCell(cells, width, height);
+        if (centralCell != null) {
+            centralCell.IsAlive = true;
+            Debug.Log(centralCell.IsAlive);
+            //Debug.Log(centralCell.coordinates.ToString());
+            centralCellGO.transform.position = centralCell.transform.position;
+            Camera.transform.position = new Vector3(centralCellGO.transform.position.x, centralCellGO.transform.position.y + 60, centralCellGO.transform.position.z - 25);
+            
+            LogCellNeighbors(centralCell);
+        }
     }
     
     
@@ -71,6 +78,32 @@ public class HexGrid : MonoBehaviour {
         int index = z * width + x;
         if (index >= 0 && index < cells.Length) {
             return cells[index];
+        }
+        return null;
+    }
+    public void LogCellNeighbors(HexCell cell) {
+        HexCoordinates[] directions = {
+            new HexCoordinates(1, 0), new HexCoordinates(1, -1), new HexCoordinates(0, -1),
+            new HexCoordinates(-1, 0), new HexCoordinates(-1, 1), new HexCoordinates(0, 1)
+        };
+
+        foreach (HexCoordinates direction in directions) {
+            HexCoordinates neighborCoordinates = new HexCoordinates(
+                cell.coordinates.X + direction.X,
+                cell.coordinates.Z + direction.Z
+            );
+
+            HexCell neighbor = GetCell(neighborCoordinates);
+            if (neighbor != null) {
+                Debug.Log($"Neighbor at: {neighbor.coordinates}");
+            }
+        }
+    }
+    public HexCell GetCell(HexCoordinates coordinates) {
+        foreach (HexCell cell in cells) {
+            if (cell.coordinates.X == coordinates.X && cell.coordinates.Z == coordinates.Z) {
+                return cell;
+            }
         }
         return null;
     }
