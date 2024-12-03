@@ -3,78 +3,96 @@ using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour {
 
-	// Grid dimensions
-	public int width = 6;
-	public int height = 6;
+    // Grid dimensions
+    public int width = 6;
+    public int height = 6;
 
-	// Default color for cells
-	public Color defaultColor = Color.white;
+    // Default color for cells
+    public Color defaultColor = Color.white;
 
-	// Prefabs for cells and labels
-	public HexCell cellPrefab;
-	public Text cellLabelPrefab;
+    // Prefabs for cells and labels
+    public HexCell cellPrefab;
+    public Text cellLabelPrefab;
+    
+    public GameObject centralCellGO;
+    public GameObject Camera;
 
-	// Array to hold all cells
-	HexCell[] cells;
+    // Array to hold all cells
+    public HexCell[] cells;
 
-	// Canvas for grid labels
-	Canvas gridCanvas;
-	// Mesh for hex grid
-	HexMesh hexMesh;
+    // Canvas for grid labels
+    Canvas gridCanvas;
 
-	void Awake () {
-		// Initialize canvas and mesh
-		gridCanvas = GetComponentInChildren<Canvas>();
-		hexMesh = GetComponentInChildren<HexMesh>();
+    void Awake () {
+        // Initialize canvas
+        gridCanvas = GetComponentInChildren<Canvas>();
 
-		// Initialize cells array
-		cells = new HexCell[height * width];
+        // Initialize cells array
+        cells = new HexCell[height * width];
 
-		// Create cells in a grid pattern
-		for (int z = 0, i = 0; z < height; z++) {
-			for (int x = 0; x < width; x++) {
-				CreateCell(x, z, i++);
-			}
-		}
-	}
+        // Create cells in a grid pattern
+        for (int z = 0, i = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                CreateCell(x, z, i++);
+            }
+        }
+    }
 
-	void Start () {
-		// Triangulate the mesh with the created cells
-		hexMesh.GenerateHexMesh(cells);
-	}
+    void Start () {
+        Debug.Log(GetCentralCell(cells, width, height).coordinates.ToString());
+        centralCellGO.transform.position = GetCentralCell(cells, width, height).transform.position;
+        Camera.transform.position = new Vector3(centralCellGO.transform.position.x, centralCellGO.transform.position.y + 60, centralCellGO.transform.position.z - 25);
+    }
+    
+    
+    
+    public HexCell GetCentralCell(HexCell[] cells, int width, int height)
+    {
+        // Calculate the center coordinates
+        int centerX = width / 2;
+        int centerZ = height / 2;
 
-	public void ColorCell (Vector3 position, Color color) {
-		// Convert position to local coordinates
-		position = transform.InverseTransformPoint(position);
-		// Get hex coordinates from position
-		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-		// Calculate cell index
-		int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
-		// Get the cell and change its color
-		HexCell cell = cells[index];
-		cell.color = color;
-		// Re-triangulate the mesh to update colors
-		hexMesh.GenerateHexMesh(cells);
-	}
+        // Find the cell with the closest coordinates to the center
+        foreach (HexCell cell in cells)
+        {
+            if (cell.coordinates.X == centerX && cell.coordinates.Z == centerZ)
+            {
+                return cell;
+            }
+        }
 
-	void CreateCell (int x, int z, int i) {
-		// Calculate cell position
-		Vector3 position;
-		position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
-		position.y = 0f;
-		position.z = z * (HexMetrics.outerRadius * 1.5f);
+        // If no exact match is found, return null
+        return null;
+    }
+    public HexCell GetCell(Vector3 position) {
+        position = transform.InverseTransformPoint(position);
+        int x = Mathf.RoundToInt(position.x / (HexMetrics.innerRadius * 2f));
+        int z = Mathf.RoundToInt(position.z / (HexMetrics.outerRadius * 1.5f));
+        int index = z * width + x;
+        if (index >= 0 && index < cells.Length) {
+            return cells[index];
+        }
+        return null;
+    }
+    
+    void CreateCell (int x, int z, int i) {
+        // Calculate cell position
+        Vector3 position;
+        position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
+        position.y = 0f;
+        position.z = z * (HexMetrics.outerRadius * 1.5f);
 
-		// Instantiate and initialize the cell
-		HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
-		cell.transform.SetParent(transform, false);
-		cell.transform.localPosition = position;
-		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-		cell.color = defaultColor;
+        // Instantiate and initialize the cell
+        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        cell.transform.SetParent(transform, false);
+        cell.transform.localPosition = position;
+        cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
-		// Instantiate and initialize the label
-		Text label = Instantiate<Text>(cellLabelPrefab);
-		label.rectTransform.SetParent(gridCanvas.transform, false);
-		label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-		label.text = cell.coordinates.ToStringOnSeparateLines();
-	}
+        // Instantiate and initialize the label
+        Text label = Instantiate<Text>(cellLabelPrefab);
+        label.rectTransform.SetParent(gridCanvas.transform, false);
+        label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
+        label.text = cell.coordinates.ToStringOnSeparateLines();
+    }
+    
 }

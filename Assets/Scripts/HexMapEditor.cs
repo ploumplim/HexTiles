@@ -3,14 +3,14 @@ using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour {
 
-	public Color[] colors;
+	// public Color[] colors;
 
 	public HexGrid hexGrid;
 
-	private Color activeColor;
+	// private Color activeColor;
 
 	void Awake () {
-		SelectColor(0);
+		// SelectColor(0);
 	}
 
 	void Update () {
@@ -18,8 +18,7 @@ public class HexMapEditor : MonoBehaviour {
 			Input.GetMouseButton(0) &&
 			!EventSystem.current.IsPointerOverGameObject()
 		) {
-			Debug.Log("Clic");
-			HandleInput();
+			 HandleInput();
 		}
 	}
 
@@ -27,11 +26,14 @@ public class HexMapEditor : MonoBehaviour {
 		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(inputRay, out hit)) {
-			hexGrid.ColorCell(hit.point, activeColor);
+			HexCell cell = hexGrid.GetCell(hit.point);
+			if (cell != null) {
+				Debug.Log($"Cell at position: {cell.coordinates}");
+			}
 		}
 	}
 
-	public void SelectColor (int index) {
-		activeColor = colors[index];
-	}
+	// public void SelectColor (int index) {
+	// 	activeColor = colors[index];
+	// }
 }
