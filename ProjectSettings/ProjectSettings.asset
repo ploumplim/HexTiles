@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 26
-  productGUID: fb9b512111ff8004ea6ac404f09adb44
+  productGUID: 653d3be0fe5053e4b924de794130e341
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: HexGridTest
+  productName: HEXGRID
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -84,6 +84,7 @@ PlayerSettings:
   muteOtherAudioSources: 0
   Prepare IOS For Recording: 0
   Force IOS Speakers When Recording: 0
+  audioSpatialExperience: 0
   deferSystemGesturesMode: 0
   hideHomeButton: 0
   submitAnalytics: 1
@@ -677,14 +678,14 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: HexGridTest
+  metroPackageName: HEXGRID
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: HexGridTest
+  metroApplicationDescription: HEXGRID
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -754,11 +755,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: e4fb90ea-de46-4834-a985-33e8d2b1f7a1
+  cloudProjectId: 7d17c09e-0701-45f2-b098-3b96ed9d9ba9
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: HexGridTest
-  organizationId: moreaubapt
+  projectName: HEXGRID
+  organizationId: unity_2m9wexdtvtzfoa
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
